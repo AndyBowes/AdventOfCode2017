@@ -1,10 +1,8 @@
 package jfactory.aoc2017.day1
 
-
-
 fun naughtyOrNice(input: String): Int {
     val nums = input.map { it.charToInt() }
-    return nums.zip(listOf(nums.last()).plus(nums))
+    return (listOf(nums.last()).plus(nums)).zipWithNext()
             .filter { it.first == it.second }
             .map{it.first}.sum()
 }

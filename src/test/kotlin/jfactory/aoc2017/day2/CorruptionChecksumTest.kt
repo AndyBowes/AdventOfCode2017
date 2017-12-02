@@ -7,12 +7,15 @@ import java.io.File
 import java.util.stream.Stream
 
 
-fun readResource(path: String): Stream<String>? {
-    val inputStream = String::class.java.getResourceAsStream(path)
-    return inputStream.bufferedReader().lines()
-}
+
 
 class CorruptionChecksumTest {
+
+    fun readResource(path: String): Stream<String>? {
+        val inputStream = CorruptionChecksumTest::class.java.classLoader.getResourceAsStream("day2/input1.txt")
+        return inputStream.bufferedReader().lines()
+    }
+
     @Test
     fun `Given 5 1 9 & 5 Then minMaxDiff should be 8`(){
         assertThat(listOf(5,1,9,5).minMaxDiff(), equalTo(8))
@@ -54,6 +57,7 @@ class CorruptionChecksumTest {
 
     @Test
     fun `Read Input from file`() {
+        val resource = readResource("day2/input1.txt")
         val input = File("/Users/andybowes/dev/abowes/adventOfCode2017/src/main/kotlin/jfactory/aoc2017/day2/input1.txt").readLines().map { it.split("\t").map { it.toInt() } }
         println(input.divisorChecksum())
     }
