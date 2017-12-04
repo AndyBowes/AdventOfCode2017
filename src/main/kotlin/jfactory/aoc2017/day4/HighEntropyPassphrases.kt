@@ -5,7 +5,7 @@ fun List<String>.isValidPassphase( ) : Boolean {
 }
 
 fun List<String>.containsAnagram(): Boolean {
-    return this.groupBy { it.toList().sorted() }.keys.size != this.size
+    return this.size != this.distinctBy{ it.toList().sorted() }.size
 }
 
 fun main(args: Array<String>) {
