@@ -8,10 +8,6 @@ import org.junit.Assert.*
 class SpiralTest {
 
     @Test
-    fun spiral() {
-    }
-
-    @Test
     fun `Given a setp of one then distance should be zero`() {
         assertThat(distance(1), equalTo(0))
     }
