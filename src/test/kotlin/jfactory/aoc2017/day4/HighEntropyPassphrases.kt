@@ -5,10 +5,8 @@ fun List<String>.isValidPassphase( ) : Boolean {
 }
 
 fun List<String>.containsAnagram(): Boolean {
-    return this.groupBy { it.toSortedLowerCase() }.any{it.value.size > 1}
+    return this.groupBy { it.toList().sorted() }.keys.size != this.size
 }
-
-fun String.toSortedLowerCase(): List<Char> = this.toLowerCase().toList().sorted()
 
 fun main(args: Array<String>) {
     println(input.split("\n").map { it.split(" ") }.filter{it.isValidPassphase()}.count())
