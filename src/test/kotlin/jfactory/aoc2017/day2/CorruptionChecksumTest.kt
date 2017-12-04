@@ -12,7 +12,7 @@ import java.util.stream.Stream
 class CorruptionChecksumTest {
 
     fun readResource(path: String): Stream<String>? {
-        val inputStream = CorruptionChecksumTest::class.java.classLoader.getResourceAsStream("day2/input1.txt")
+        val inputStream = File(CorruptionChecksumTest::class.java.getResource("input1.txt").file)
         return inputStream.bufferedReader().lines()
     }
 
@@ -57,8 +57,8 @@ class CorruptionChecksumTest {
 
     @Test
     fun `Read Input from file`() {
-        val resource = readResource("day2/input1.txt")
-        val input = File("/Users/andybowes/dev/abowes/adventOfCode2017/src/main/kotlin/jfactory/aoc2017/day2/input1.txt").readLines().map { it.split("\t").map { it.toInt() } }
-        println(input.divisorChecksum())
+        val resource = readResource("input1.txt")
+        val input = resource?.map { it.split("\t").map { it.toInt() } }
+        //println(input?.divisorChecksum())
     }
 }
