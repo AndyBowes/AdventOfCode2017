@@ -12,8 +12,12 @@ class MemoryReallocationTest{
     }
 
     @Test
-    fun `Given 0, 2, 7, 0 When memory reallocated should return 5`(){
-        assertThat(memoryAllocation(listOf(0,2,7,0)), equalTo(5))
+    fun `Given 0, 2, 7, 0 When memory reallocated should return 5,3`(){
+        assertThat(memoryAllocation(listOf(0,2,7,0)), equalTo(Pair(5,4)))
     }
 
+    @Test
+    fun `Given supplied input When memoryAllocation is run Then accepted answer is returned`(){
+        assertThat(memoryAllocation(listOf(4,10,4,1,8,4,9,14,5,1,14,15,0,15,3,5)), equalTo(Pair(12841,8038)))
+    }
 }

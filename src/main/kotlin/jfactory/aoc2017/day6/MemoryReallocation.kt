@@ -5,16 +5,16 @@ fun List<Int>.reallocate(): List<Int>{
     val reallocation = this.toMutableList()
     reallocation[maxIndex] = 0
     (1..memorySize).map { (maxIndex + it)%this.size }.forEach {
-        reallocation[it] += 1
+        reallocation[it]++
     }
     return reallocation
 }
 
-tailrec fun memoryAllocation(allocation: List<Int>, history: List<List<Int>> = listOf()) : Pair<Int, Int>{
-    if (allocation in history){
-        return Pair(history.size, history.size - history.indexOf(allocation))
+tailrec fun memoryAllocation(allocation: List<Int>, history: List<Int> = listOf()) : Pair<Int, Int>{
+    if (allocation.hashCode() in history){
+        return history.size to (history.size - history.indexOf(allocation.hashCode()))
     }
-    return memoryAllocation(allocation.reallocate(), history.plusElement(allocation))
+    return memoryAllocation(allocation.reallocate(), history.plusElement(allocation.hashCode()))
 }
 
 fun main(args: Array<String>) {
