@@ -2,9 +2,7 @@ package jfactory.aoc2017.day5
 
 import java.io.File
 
-
 fun main(args: Array<String>) {
-
     val jumps = File("src/main/kotlin/jfactory/aoc2017/day5/input5.txt").readLines().map { it.toInt() }
     println( countJumps(jumps))
 }
