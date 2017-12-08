@@ -6,52 +6,54 @@ import kotlin.math.max
 val LINE_REGEX = Regex("""^(\w+) (\w+) (-?\d+) if (\w+) ([><=!]+) (-?\d+)$""")
 
 typealias Registers = MutableMap<String,Int>
+fun Registers.getValue(key: String) = this.getOrDefault(key,0)
+
 fun getOperation(opCode: String) : (Registers, String, Int) -> Unit {
     return when (opCode) {
-        "inc" -> { r: Registers, k: String, v: Int -> r.put(k, r.getOrDefault(k,0) + v)}
-        "dec" -> { r: Registers, k: String, v: Int -> r.put(k, r.getOrDefault(k,0) - v)}
+        "inc" -> { r: Registers, k: String, v: Int -> r.put(k, r.getValue(k) + v)}
+        "dec" -> { r: Registers, k: String, v: Int -> r.put(k, r.getValue(k) - v)}
         else -> throw IllegalArgumentException("Invalid OpCode: $opCode")
     }
 }
 
-fun getPredictate(comp: String) : (Registers, String, Int) -> Boolean {
+fun getPredicate(comp: String) : (Registers, String, Int) -> Boolean {
     return when (comp) {
-        "==" -> { r: Registers, k: String, v: Int -> r.getOrDefault(k, 0) == v }
-        "<=", "!>" -> { r: Registers, k: String, v: Int -> r.getOrDefault(k, 0) <= v }
-        ">=", "!<" -> { r: Registers, k: String, v: Int -> r.getOrDefault(k, 0) >= v }
-        ">" -> { r: Registers, k: String, v: Int -> r.getOrDefault(k, 0) > v }
-        "<" -> { r: Registers, k: String, v: Int -> r.getOrDefault(k, 0) < v }
-        "!=" -> { r: Registers, k: String, v: Int -> r.getOrDefault(k, 0) != v }
+        "==" -> { r: Registers, k: String, v: Int -> r.getValue(k) == v }
+        "<=", "!>" -> { r: Registers, k: String, v: Int -> r.getValue(k) <= v }
+        ">=", "!<" -> { r: Registers, k: String, v: Int -> r.getValue(k) >= v }
+        ">" -> { r: Registers, k: String, v: Int -> r.getValue(k) > v }
+        "<" -> { r: Registers, k: String, v: Int -> r.getValue(k) < v }
+        "!=" -> { r: Registers, k: String, v: Int -> r.getValue(k) != v }
         else -> throw IllegalArgumentException("Invalid Predicate: $comp")
     }
 }
 
 fun Registers.applyOperation(target: String, opCode: String, change: Int, source: String, compator: String, value: Int){
-    if (getPredictate(compator).invoke(this, source, value)){
+    if (getPredicate(compator).invoke(this, source, value)){
         getOperation(opCode).invoke(this,target, change)
     }
 }
 
 fun applyOperations(operations : List<String>) : Pair<Registers,Int> {
-    val registers = mutableMapOf<String, Int>()
-    var highWater = 0
-    operations.forEach {
-        val match = LINE_REGEX.matchEntire(it)
-        when (match){
-            null -> throw IllegalArgumentException("Illegal Operation : $it")
-            else -> {
-                val target = match.groupValues[1]
-                val opCode = match.groupValues[2]
-                val change = match.groupValues[3].toInt()
-                val source = match.groupValues[4]
-                val comparator = match.groupValues[5]
-                val value = match.groupValues[6].toInt()
-                registers.applyOperation(target, opCode, change, source, comparator, value)
-                highWater = max(highWater, registers.getValue(target))
-            }
+    return operations.fold(Pair(mutableMapOf(),0), { prev, line -> processLine(line, prev.first, prev.second)})
+}
+
+private fun processLine(line: String, registers: MutableMap<String, Int>, highWater: Int): Pair<MutableMap<String, Int>, Int> {
+    val match = LINE_REGEX.matchEntire(line)
+    return when (match) {
+        null -> throw IllegalArgumentException("Illegal Operation : $line")
+        else -> {
+            val target = match.groupValues[1]
+            val opCode = match.groupValues[2]
+            val change = match.groupValues[3].toInt()
+            val source = match.groupValues[4]
+            val comparator = match.groupValues[5]
+            val value = match.groupValues[6].toInt()
+            registers.applyOperation(target, opCode, change, source, comparator, value)
+            return Pair(registers,max(highWater, registers.getValue(target)))
         }
     }
-    return registers to highWater
+
 }
 
 fun main(args: Array<String>) {
