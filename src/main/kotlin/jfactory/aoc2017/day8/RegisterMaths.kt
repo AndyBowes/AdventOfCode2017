@@ -6,7 +6,7 @@ val name = """[a-z]+"""
 val number = """-?\d+"""
 val regex = """($name) (inc|dec) ($number) if ($name) ([><=!]+) ($number)""".toRegex()
 
-operator fun <T> List<T>.component6() = get(5)  // Addition of 6th parameter for destructoring of lists
+operator fun <T> List<T>.component6() = get(5)  // Addition of 6th parameter for destructuring of lists
 
 typealias Registers = MutableMap<String,Int>
 fun Registers.getValue(key: String) = this.getOrDefault(key,0)
