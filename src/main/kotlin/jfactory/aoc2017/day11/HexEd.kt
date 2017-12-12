@@ -12,13 +12,31 @@ fun Position.distance() = listOf(first, second, third).filter{it > 0}.sum()
 fun move(directions : List<String> ) = directions.fold(Pair(Position(0,0,0),0),
         { acc, dir -> Pair(acc.first + toMove(dir), max(acc.second, acc.first.distance()))})
 
+//fun path(start: Position, directions: List<String>)
+//
+
+public inline fun <T, R> Iterable<T>.accumulate(initial: R, operation: (previous: R, T) -> R): List<R> {
+    var accumulator = arrayListOf(initial)
+    for (element in this) accumulator.add(operation(accumulator.last(), element))
+    return accumulator
+}
+
+
+// This solution uses cube coordinates (https://www.redblobgames.com/grids/hexagons/#neighbors)
+//                \ (0, +1, -1) /
+//                 +-----------+
+//   (-1, +1, 0)  /             \ (+1, 0, -1)
+//              -+               +-
+//   (-1, 0, +1)  \             / (+1, -1, 0)
+//                 +-----------+
+//                / (0, -1, +1) \
 fun toMove(dir: String) = when(dir){
-    "n" -> Move(1,0,-1)
-    "ne" -> Move(0,1,-1)
-    "nw" -> Move(1,-1,0)
-    "s" -> Move(-1,0,1)
-    "se" -> Move(-1,1,0)
-    "sw" -> Move(0,-1,1)
+    "n" -> Move(0,1,-1)
+    "ne" -> Move(1,0,-1)
+    "nw" -> Move(-1,1,0)
+    "s" -> Move(0,-1,1)
+    "se" -> Move(1,-1,0)
+    "sw" -> Move(-1,0,1)
     else -> throw IllegalArgumentException("Invalid direction $dir")
 }
 
