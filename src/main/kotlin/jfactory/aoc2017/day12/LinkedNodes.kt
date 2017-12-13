@@ -4,8 +4,7 @@ import java.util.*
 
 fun parseInput(lines: List<String>): Nodes{
     return lines.map { it.split(" <-> ") }
-                .map{ it[0].toInt() to it[1].split(", ")
-                    .map(String::toInt)}.toMap()
+            .associate { it[0].toInt() to it[1].split(", ").map(String::toInt) }
 }
 
 typealias Nodes = Map<Int, List<Int>>

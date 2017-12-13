@@ -14,6 +14,4 @@
 - **Day 10** - **High Entropy Passphrase** - solved
 - **Day 11** - **Hex Ed** - solved
 - **Day 12** - **Linked Nodes** - solved
-
-
- 
+- **Day 13** - **Packet Scanners** - solved
