@@ -53,12 +53,4 @@ class CorruptionChecksumTest {
         assertThat(listOf(3,8,6,5).divisor(), equalTo(2))
     }
 
-
-
-    @Test
-    fun `Read Input from file`() {
-        val resource = readResource("input1.txt")
-        val input = resource?.map { it.split("\t").map { it.toInt() } }
-        //println(input?.divisorChecksum())
-    }
 }

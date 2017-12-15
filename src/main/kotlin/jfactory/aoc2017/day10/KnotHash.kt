@@ -1,12 +1,6 @@
 package jfactory.aoc2017.day10
 
-fun <E> MutableList<E>.flip(start: Int, count: Int)  : MutableList<E>{
-    val idx = (start until start + count).map { it % this.size }
-    this.slice(idx).reversed().zip(idx).forEach {
-        this[it.second] = it.first
-    }
-    return this
-}
+import jfactory.aoc2017.util.flip
 
 fun part1(input: List<Int>, size: Int = 256): Int {
     val state = (0 until size).toMutableList()
