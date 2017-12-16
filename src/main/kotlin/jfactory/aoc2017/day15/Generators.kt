@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
 
     println(genA.zip(genB)
             .take(40_000_000)
-            .count { (a, b) -> a and 0xffff == b and 0xffff })
+            .count { (a, b) -> a.lowBits() == b.lowBits() })
 
     println(genA.filter { it % 4L == 0L }.zip(genB.filter { it % 8L == 0L })
             .take(5_000_000)
