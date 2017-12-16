@@ -22,3 +22,21 @@ inline fun <T, R> Iterable<T>.accumulate(initial: R, operation: (previous: R, T)
     for (element in this) accumulator.add(operation(accumulator.last(), element))
     return accumulator
 }
+
+
+/**
+ * Memoization which is backed by a Mutable Map
+ * Provide a function which will be used to populate the missing elements as they are requested.
+ */
+class MemoizedMap<K,V>(val items: MutableMap<K,V>, private val memoFunction : (K) -> V) : MutableMap<K,V> by items {
+    override fun get(key: K): V {
+        val value = items.get(key)
+        return if (value == null) {
+            val answer = memoFunction.invoke(key)
+            items.put(key, answer)
+            answer
+        } else {
+            value
+        }
+    }
+}
