@@ -15,3 +15,8 @@
 - **Day 11** - **Hex Ed** - solved
 - **Day 12** - **Linked Nodes** - solved
 - **Day 13** - **Packet Scanners** - solved
+- **Day 14** - **Disk Defragmentation** - solved
+- **Day 15** - **Generators** - solved
+- **Day 16** - **Permutation Promenade** - solved
+- **Day 17** - **Spin Locks** - solved
+- **Day 18** - **Duet** - solved
