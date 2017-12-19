@@ -6,6 +6,7 @@ import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
+import kotlin.system.measureTimeMillis
 
 fun Map<String, Long>.regValue(r: String): Long = r.toLongOrNull() ?: this.getOrDefault(r, 0)
 
@@ -61,9 +62,8 @@ suspend fun part2(instructions: List<String>, progId: Int, incoming: Channel<Lon
             "mod" -> registers.set(a, registers.regValue(a) % b)
             "snd" -> outgoing.send(registers.regValue(a)).also { sent++ }
             "rcv" -> try {
-                registers.set(a, withTimeout(50) { incoming.receive() }) // Assume timeout will only occur on Deadlock.
+                registers.set(a, withTimeout(20) { incoming.receive() }) // Assume timeout will only occur on Deadlock.
             } catch (e: TimeoutCancellationException) {
-                println("Reached Deadlock")
                 break@loop
             }
             "jgz" -> if (registers.regValue(a) > 0L) {
@@ -79,15 +79,19 @@ suspend fun part2(instructions: List<String>, progId: Int, incoming: Channel<Lon
 
 fun main(args: Array<String>) {
     val instructions = input.split("\n")
-    println(part1(instructions))
+    println("Part 1: (ms) "+  measureTimeMillis {
+        println(part1(instructions))
+    } )
 
-    runBlocking {
-        val channel0to1 = Channel<Long>(UNLIMITED)
-        val channel1to0 = Channel<Long>(UNLIMITED)
-        val prog0 = async { part2(instructions, 0, channel0to1, channel1to0) }
-        val prog1 = async { part2(instructions, 1, channel1to0, channel0to1) }
-        println("Answer is : ${prog1.await()}")
-    }
+    println("Part 2: (ms) " + measureTimeMillis {
+        runBlocking {
+            val channel0to1 = Channel<Long>(UNLIMITED)
+            val channel1to0 = Channel<Long>(UNLIMITED)
+            val prog0 = async { part2(instructions, 0, channel0to1, channel1to0) }
+            val prog1 = async { part2(instructions, 1, channel1to0, channel0to1) }
+            println("Answer is : ${prog1.await()}")
+        }
+    })
 }
 
 
