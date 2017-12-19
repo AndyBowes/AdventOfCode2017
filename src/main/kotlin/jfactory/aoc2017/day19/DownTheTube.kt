@@ -1,26 +1,36 @@
 package jfactory.aoc2017.day19
 
+typealias Position = Pair<Int,Int>
+operator fun Position.plus(other: Pair<Int, Int>) = this.first + other.first to this.second + other.second
 
-operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>) = this.first + other.first to this.second + other.second
+typealias Direction = Pair<Int,Int>
+// Find both Directions at 90˚ to current direction
+fun Direction.availableTurns() =  listOf( -1 * this.second to -1 * this.first, 1 * this.second to 1 * this.first)
 
-fun followPath(lines: List<String>): String {
-    var currentPos = lines[0].indexOf("|") to 0
+typealias Grid = List<String>
+infix fun Grid.contains(pos: Position): Boolean = (pos.first >= 0 && pos.second >= 0 && pos.second < this.size && pos.first < this[pos.second].length)
+
+fun Grid.charAt(pos: Position) = this.charAt(pos.first, pos.second)
+fun Grid.charAt(x:Int, y:Int) : Char {
+    return try {
+        this[y][x]
+    } catch (e:IndexOutOfBoundsException) {
+        return ' '
+    }
+}
+
+fun followPath(grid: Grid): String {
+    var currentPos = grid[0].indexOf("|") to 0
     var currentDir = 0 to 1
     var steps = 0
 
     val visitedLetters = mutableListOf<Char>()
-    loop@ while (currentPos.first >= 0
-            && currentPos.second >= 0
-            && currentPos.second < lines.size
-            && currentPos.first < lines[currentPos.second].length) {
-
-        val c = lines[currentPos.second][currentPos.first]
+    loop@ while (grid contains  currentPos) {
+        val c = grid.charAt(currentPos)
         when {
-            c == '+' -> currentDir = doTurn(lines, currentPos, currentDir)
+            c == '+' -> currentDir = currentDir.availableTurns().first { grid.charAt(currentPos + it) in listOf('-','|') }
             c.isLetter() -> visitedLetters.add(c)
-            c in listOf('|', '-') -> {
-            }
-            else -> break@loop
+            c == ' ' -> break@loop
         }
         currentPos += currentDir
         steps ++
@@ -28,35 +38,6 @@ fun followPath(lines: List<String>): String {
     println(steps)
     return visitedLetters.joinToString("")
 }
-
-
-
-fun List<String>.charAt(x:Int, y:Int) : Char {
-    return try {
-        this[y][x]
-    } catch (e:StringIndexOutOfBoundsException) {
-        return ' '
-    }
-}
-
-fun doTurn(lines: List<String>, currentPos: Pair<Int, Int>, currentDir: Pair<Int, Int>): Pair<Int, Int> {
-    var nextDir: Pair<Int, Int>? = null
-    if (currentDir.first != 0) {
-        if (currentPos.second > 0 && lines.charAt(currentPos.first, currentPos.second - 1) == '|') {
-            nextDir = 0 to -1
-        } else if (currentPos.second < (lines.size - 1) && lines.charAt(currentPos.first, currentPos.second + 1) == '|') {
-            nextDir = 0 to 1
-        }
-    } else {
-        if (currentPos.first > 0 && lines.charAt(currentPos.first - 1, currentPos.second) == '-') {
-            nextDir = -1 to 0
-        } else if (lines.charAt(currentPos.first + 1, currentPos.second) == '-') {
-            nextDir = 1 to 0
-        }
-    }
-    return if (nextDir != null) nextDir else throw IllegalArgumentException("Failed to turn at $currentPos : $currentDir")
-}
-
 
 fun main(args: Array<String>) {
     val lines = input.split("\n")
