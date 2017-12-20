@@ -25,7 +25,7 @@ fun followPath(grid: Grid): String {
     var steps = 0
 
     val visitedLetters = mutableListOf<Char>()
-    loop@ while (grid contains  currentPos) {
+    loop@ while (grid contains currentPos) {
         val c = grid.charAt(currentPos)
         when {
             c == '+' -> currentDir = currentDir.availableTurns().first { grid.charAt(currentPos + it) in listOf('-','|') }
