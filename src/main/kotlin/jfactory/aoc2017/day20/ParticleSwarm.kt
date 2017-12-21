@@ -1,26 +1,23 @@
 package jfactory.aoc2017.day20
 
 import kotlin.math.abs
+import kotlin.system.measureTimeMillis
 
 data class Coordinate3D(val x:Int, val y:Int, val z:Int) : Comparable<Coordinate3D> {
     override fun compareTo(other: Coordinate3D) = (abs(x) + abs(y) + abs(z)).compareTo(abs(other.x) + abs(other.y)+abs(other.z))
-    operator infix fun plus(other: Coordinate3D) = Coordinate3D(this.x + other.x, this.y + other.y, this.z + other.z)
+    operator infix fun plus(other: Coordinate3D) = Coordinate3D(x + other.x, y + other.y, z + other.z)
 }
 
 typealias Acceleration = Coordinate3D
 typealias Velocity = Coordinate3D
 typealias Position = Coordinate3D
 
-class SwarmItem(val pos: Position, val velocity: Velocity, val acceleration: Acceleration) : Comparable<SwarmItem>{
-    override fun compareTo(other: SwarmItem): Int = compareValuesBy(this, other, { it.acceleration }, { it.velocity }, { it.pos})
-
+data class SwarmItem(val pos: Position, val velocity: Velocity, val acceleration: Acceleration) : Comparable<SwarmItem>{
     constructor(x:Int,y:Int,z:Int, vx:Int,vy:Int,vz:Int, ax:Int,ay:Int,az:Int) : this(Position(x,y,z), Velocity(vx,vy,vz), Acceleration(ax,ay,az))
 
-    fun move() : SwarmItem {
-        val newV = velocity + acceleration
-        val newPos = pos + newV
-        return SwarmItem( newPos, newV, this.acceleration)
-    }
+    override fun compareTo(other: SwarmItem): Int = compareValuesBy(this, other, { it.acceleration }, { it.velocity }, { it.pos})
+
+    fun move() = this.copy(pos = pos + velocity + acceleration, velocity = velocity + acceleration)
 }
 
 fun List<SwarmItem>.removeCollisions() : List<SwarmItem>{
@@ -28,17 +25,19 @@ fun List<SwarmItem>.removeCollisions() : List<SwarmItem>{
 }
 
 fun part2(items: List<SwarmItem>): List<SwarmItem>{
-    return (0..1000).fold(items){ prev, _ -> prev.map { it.move() }.removeCollisions() }
+    return (0..500).fold(items){ prev, _ -> prev.map { it.move() }.removeCollisions() }
 }
-
 
 fun main(args: Array<String>) {
     val items = input.split("\n").map { Regex(ENTRY_REGEX).matchEntire(it) }
             .filterNotNull().map{ it.groupValues.drop(1).map(String::toInt) }
             .map { SwarmItem(it[0],it[1],it[2],it[3],it[4],it[5],it[6],it[7],it[8]) }
 
-    println("Part 1: " + items.withIndex().minBy { it.value }?.index)
-    println(part2(items).size)
+
+    println(measureTimeMillis {
+        println("Part 1: " + items.withIndex().minBy { it.value }?.index)
+    })
+    println( measureTimeMillis { println(part2(items).size) } )
 }
 
 const val N = "(-?\\d*)"
