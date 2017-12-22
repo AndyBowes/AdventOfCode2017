@@ -29,7 +29,7 @@ fun part2(items: List<SwarmItem>): List<SwarmItem>{
 }
 
 fun main(args: Array<String>) {
-    val items = input.split("\n").map { Regex(ENTRY_REGEX).matchEntire(it) }
+    val items = jfactory.aoc2017.day21.input.split("\n").map { Regex(ENTRY_REGEX).matchEntire(it) }
             .filterNotNull().map{ it.groupValues.drop(1).map(String::toInt) }
             .map { SwarmItem(it[0],it[1],it[2],it[3],it[4],it[5],it[6],it[7],it[8]) }
 
