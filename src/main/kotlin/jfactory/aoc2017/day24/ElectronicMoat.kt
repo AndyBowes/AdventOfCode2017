@@ -9,9 +9,9 @@ data class Element(val a:Int,val b:Int){
 typealias Bridge = List<Element>
 fun Bridge.value() = this.sumBy { it.value }
 
-tailrec fun buildBridge(x: Int, bridge: Bridge, remaining: List<Element>, comparator: Comparator<Bridge>) : Bridge {
+fun buildBridge(remaining: List<Element>, x: Int = 0, bridge: Bridge = emptyList(), comparator: Comparator<Bridge> = compareBy(Bridge::value)) : Bridge {
     return remaining.filter { it.canJoin(x) }
-            .map { buildBridge(it.otherEnd(x), bridge + it, remaining - it, comparator) }
+            .map { buildBridge(remaining - it, it.otherEnd(x), bridge + it, comparator) }
                 .maxWith(comparator) ?: bridge
 }
 
@@ -20,8 +20,8 @@ fun main(args: Array<String>) {
     val elements = input.split("\n")
             .map { it.split("/")
                     .map(String::toInt)}.map { e-> Element(e[0], e[1])}
-    println(buildBridge(0, listOf(), elements,compareBy(Bridge::value)).value())
-    println(buildBridge(0, listOf(), elements,compareBy(Bridge::size) then compareBy(Bridge::value)).value())
+    println(buildBridge(elements).value())
+    println(buildBridge(elements, comparator = compareBy(Bridge::size) then compareBy(Bridge::value)).value())
 }
 
 
